@@ -1,0 +1,138 @@
+npx react-native init FirebaseAuthApp
+cd FirebaseAuthApp
+npm install @react-native-firebase/app @react-native-firebase/auth
+// src/LoginScreen.js
+import React, { useState } from 'react';
+import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import auth from '@react-native-firebase/auth';
+
+const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      setErrorMessage('Please fill in both fields');
+      return;
+    }
+    
+    auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        navigation.navigate('Dashboard');
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+      });
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Login</Text>
+      {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <Button title="Login" onPress={handleLogin} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 16,
+  },
+  header: {
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingLeft: 10,
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+});
+
+export default LoginScreen;
+// src/DashboardScreen.js
+import React from 'react';
+import { View, Text, Button, StyleSheet } from 'react-native';
+import auth from '@react-native-firebase/auth';
+
+const DashboardScreen = ({ navigation }) => {
+  const handleLogout = () => {
+    auth()
+      .signOut()
+      .then(() => navigation.navigate('Login'));
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.welcome}>Welcome to your Dashboard!</Text>
+      <Button title="Logout" onPress={handleLogout} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  welcome: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+});
+
+export default DashboardScreen;
+npm install @react-navigation/native @react-navigation/stack react-native-screens react-native-safe-area-context
+npm install react-native-gesture-handler react-native-reanimated
+npm install @react-navigation/native @react-navigation/stack react-native-screens react-native-safe-area-context
+npm install react-native-gesture-handler react-native-reanimated
+// App.js
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginScreen from './src/LoginScreen';
+import DashboardScreen from './src/DashboardScreen';
+
+const Stack = createStackNavigator();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Dashboard" component={DashboardScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default App;
+npx react-native run-ios
+npx react-native run-android
